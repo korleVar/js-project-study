@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>калькулятор</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/4bd5daf0da.js" crossorigin="anonymous"></script>
+</head>
+
+<body onselectstart="return false" onmousedown="return false">
+
+    <div class="calc">
+
+
+        <div class="input-box">
+            <p class="input-calc" id="box" required> </p> <i class="fa-solid fa-delete-left" id="Backspace"> </i>
+
+            <!-- <input class="input-calc" id="box" pattern="^(\d{1,5})([+\-*/])(\d{1,5})$" required>
+            <i class="fa-solid fa-delete-left" id="Backspace"> </i> -->
+
+
+        </div>
+
+        <div class="btn-container_calc">
+            <div class="btn-number-group">
+                <button class="btn btn-number" id="btn_number">1</button>
+                <button class="btn btn-number" id="btn_number">2</button>
+                <button class="btn btn-number" id="btn_number">3</button>
+                <button class="btn btn-number" id="btn_number">4</button>
+                <button class="btn btn-number" id="btn_number">5</button>
+                <button class="btn btn-number" id="btn_number">6</button>
+                <button class="btn btn-number" id="btn_number">7</button>
+                <button class="btn btn-number" id="btn_number">8</button>
+                <button class="btn btn-number" id="btn_number">9</button>
+                <button class="btn btn-number" id="btn_number">0</button>
+                <button class="btn btn-oper" id="btn_oper">-</button>
+                <button class="btn btn-oper" id="btn_oper">*</button>
+                <button class="btn btn-oper" id="btn_oper">/</button>
+                <button class="btn btn-oper" id="btn_oper">+</button>
+                <button class="btn btn-oper" id="btn_oper">С</button>
+                <button class="btn btn-oper" id="processData"> &#61; </button>
+
+            </div>
+
+
+        </div>
+
+
+        <output class="calc-result" style="direction: rtl"></output>
+    </div>
+    <div class="btn-container">
+        <div class="btn-number-group_history">
+            <p class="header-name">журнал:</p>
+            <div class="history-block" id="history"> </div>
+            <!-- <div></div> -->
+            <!-- <p>результат: </p> -->
+            <p class="historys" id="historyResult"> </p>
+            <i class="fa-solid fa-trash " id="delete"></i>
+        </div>
+
+
+    </div>
+    <script>
+
+
+
+    </script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

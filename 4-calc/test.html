@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ограниченный Калькулятор</title>
+</head>
+
+<body>
+    <input type="text" id="input" placeholder="Пример: 12345+54321">
+    <button onclick="calculate()">Вычислить</button>
+    <p>Результат: <span id="result"></span></p>
+
+    <script>
+        document.getElementById('input').addEventListener('input', function (e) {
+            var value = e.target.value;
+            var parts = value.split(/([+\-*/])/);
+
+            if (parts.length > 1) {
+                if (parts[0].length > 5 || parts[2].length > 5) {
+                    e.target.value = parts[0].slice(0, 5) + parts[1] + parts[2].slice(0, 5);
+                }
+            } else if (parts[0].length > 5) {
+                e.target.value = parts[0].slice(0, 5);
+            }
+        });
+
+        function calculate() {
+            var input = document.getElementById('input').value;
+            var match = input.match(/^(\d{1,5})([+\-*/])(\d{1,5})$/);
+
+            if (!match) {
+                alert("Неверный формат.");
+                return;
+            }
+
+            var num1 = parseFloat(match[1]);
+            var operator = match[2];
+            var num2 = parseFloat(match[3]);
+            var result;
+
+            switch (operator) {
+                case '+': result = num1 + num2; break;
+                case '-': result = num1 - num2; break;
+                case '*': result = num1 * num2; break;
+                case '/':
+                    if (num2 === 0) {
+                        alert("На ноль делить нельзя");
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                default:
+                    alert("Недопустимая операция");
+                    return;
+            }
+
+            document.getElementById('result').innerText = result.toFixed(2);
+        }
+
+
+
+        function blockCertainCharacters(charArray) {
+            const inputField = document.getElementById("input"); // замените на ваше поле ввода
+
+            inputField.addEventListener("keydown", function (event) {
+                if (charArray.includes(event.key)) {
+                    event.preventDefault(); // блокируем ввод символа
+                }
+            });
+        }
+
+        // Пример использования:
+        const charactersToBlock = ["1", "2", "3", "a", "b", "c"]; // замените на символы, которые вы хотите блокировать
+        blockCertainCharacters(charactersToBlock);
+
+    </script>
+</body>
+
+</html>
