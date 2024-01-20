@@ -38,11 +38,16 @@ const opers = ["*", "/", "+", "-", "."];
 document.addEventListener("keydown", function (event) {
   const currentText = box.innerText;
 
+  const isMinusOpers = minusOpers(currentText, event.key);
+  if (isMinusOpers) return;
+
   const isLimitChar = limitChar(currentText, event.key); // ограничения на ввод цифр
   if (isLimitChar) return;
   const isDubleOpers = dublOpers(currentText, event.key);
   if (isDubleOpers) return;
 
+  const isChangeOpers = changeOpers(currentText, event.key);
+  box.innerText = isChangeOpers;
   //проверка на дублирование 0
   if (box.innerText == "0" && event.key === "0") {
     box.innerText = box.innerText.substring(0, box.innerText.length - 1);
@@ -65,12 +70,14 @@ document.addEventListener("keydown", function (event) {
         break;
       case "=":
         if (box.innerText == "") return;
-        historyExample();
+        // historyExample();
+        enterFunction(currentText);
+
         break;
       case "Enter":
         if (box.innerText == "") return;
 
-        enterFunction();
+        enterFunction(currentText);
         // historyExample(event);
         break;
       case "Backspace":
@@ -95,14 +102,20 @@ document.addEventListener("keydown", function (event) {
 document.querySelector(".calc").addEventListener("click", function (event) {
   const value = event.target.innerText;
   const currentText = box.innerText;
+
   if (!event.target.classList.contains("btn")) return;
 
+  const isMinusOpers = minusOpers(currentText, value);
+  if (isMinusOpers) return;
   const isLimitChar = limitChar(currentText, value); // ограничения на ввод цифр
   if (isLimitChar) return;
 
   const isDubleOpers = dublOpers(currentText, value);
   if (isDubleOpers) return;
 
+  const isChangeOpers = changeOpers(currentText, value);
+  box.innerText = isChangeOpers;
+  // changeOpers(text);
   //проверка на дублирование 0
   if (box.innerText == "0" && value === "0") {
     box.innerText = box.innerText.substring(0, box.innerText.length - 1);
@@ -115,7 +128,8 @@ document.querySelector(".calc").addEventListener("click", function (event) {
 
     case "=":
       if (box.innerText == "") return;
-      historyExample();
+      currentTextHistory = box.innerText;
+      enterFunction(currentTextHistory);
 
       break;
     default:
@@ -144,7 +158,7 @@ function updateHistory() {
 }
 
 function historyExample(currentTextHistory) {
-  var currentTextHistory = box.innerText;
+  // var currentTextHistory = box.innerText;
   var result = eval(currentTextHistory);
   box.innerText = result;
 
@@ -170,39 +184,57 @@ function historyExample(currentTextHistory) {
 
 //многократное использование 2 слагаемого
 
-function enterFunction() {
+function enterFunction(text) {
+  // разбивка на ячейки
+  const lengthArr = text.split(/[\*\/\+\-]/).length;
+  const textArr = text.split(/[\*\/\+\-]/);
+  let indic = 0;
+  console.log(text.startsWith("-"));
+
+  if (text.startsWith("-")) indic = 1;
+
   var history = JSON.parse(sessionStorage.getItem("history")) || [];
-  var historyEnd = history[history.length - 1];
-  let isOper = "";
+  if (history == null || (lengthArr >= 2 && indic != 1)) {
+    historyExample(text);
+  } else {
+    var historyEnd = history[history.length - 1];
 
-  let resultEnd = "";
-  let historyEndResult = historyEnd.text.split(/[+\-*/]/)[1];
+    let isOper = "";
 
-  for (let j = 0; j < historyEnd.text.length; j++) {
-    let currentChar = historyEnd.text[j];
-    if (["+", "-", "*", "/"].includes(currentChar)) {
-      isOper = currentChar;
-      break;
+    let resultEnd = "";
+    let historyEndResult = historyEnd.text.split(/[+\-*/]/)[1];
+    for (let j = 0; j < historyEnd.text.length; j++) {
+      let currentChar = historyEnd.text[j];
+      if (["+", "-", "*", "/"].includes(currentChar)) {
+        isOper = currentChar;
+
+        break;
+      }
     }
+
+    resultEnd = isOper + historyEndResult;
+    var textResultEnd = text + resultEnd;
+
+    historyExample(textResultEnd);
   }
-
-  resultEnd = isOper + historyEndResult;
-
-  historyExample(resultEnd);
 }
 
-// ------------------------------------
 // лимит на два элемента
 
 function limitChar(text, key) {
   const lastNumber = text.split(/[\*\/\+\-]/).at(-1);
+  const lengthArr = text.split(/[\*\/\+\-]/).length;
 
+  if (lengthArr >= 2 && opers.includes(key)) historyExample(text);
+
+  // последний символ оператор
   const lastChar = text.at(-1);
-  if (opers.includes(lastChar)) return false;
+  if (opers.includes(lastChar)) {
+    return false;
+  }
+  // длина и цифры
   if (lastNumber.length >= 16 && numbers.includes(key)) return true;
 }
-
-// -------
 
 // Загружаем историю
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -257,6 +289,7 @@ function limitInput(event) {
   }
 }
 
+// дублирование оператора
 function dublOpers(currentText, value) {
   let endOper = false;
 
@@ -272,6 +305,26 @@ function dublOpers(currentText, value) {
   }
 }
 
+// минус в начале строки
+function minusOpers(text, key) {
+  if (text === "" && key === "-") {
+    return false;
+  } else if (text === "" && !numbers.includes(key)) {
+    return true;
+  }
+  return false;
+}
+
+// подмена оператора
+
+function changeOpers(text, key) {
+  var lastChar = text[text.length - 1];
+  if (opers.indexOf(lastChar) > -1 && text.length > 1) {
+    text = text.slice(0, -1) + key;
+  }
+  return text;
+}
+
 ////дублироввание в журнале
 ////корретное ограничение на символы
 //// сортировка истории
@@ -282,4 +335,7 @@ function dublOpers(currentText, value) {
 //// визуал
 //// отображение сразу sessionStorage
 ////убрать undefined, запретит отправку пустых данных
-//ограничение на два слогаемых
+////ограничение на два слогаемых
+// //enter
+//// разрешить минус в начале строки
+//заменить последний оператор на только что нажатый оператор
